@@ -1,12 +1,14 @@
 import math
+import time
 
-class MathCalculator:
+class MathSeries:
     def __init__(self, n):
         if n < 0:
-            raise ValueError("Enter a non-negative integer")
+            raise ValueError("N must be a non-negative integer")
         self.n = n
 
     def fibonacci_iterative(self):
+        """Iterative Fibonacci using object state"""
         a, b = 0, 1
         result = []
         for _ in range(self.n):
@@ -14,7 +16,8 @@ class MathCalculator:
             a, b = b, a + b
         return result
 
-    def fibonacci_recursive(self):
+    def fibonacci_series(self):
+        """Original recursive Fibonacci - object method"""
         def helper(k):
             if k <= 0:
                 return []
@@ -28,30 +31,48 @@ class MathCalculator:
         return helper(self.n)
 
     def factorial_iterative(self):
+        """Iterative factorial using object state"""
         value = 1
         for i in range(1, self.n + 1):
             value *= i
         return value
 
-    def factorial_recursive(self):
-        if self.n == 0 or self.n == 1:
-            return 1
-        return self.n * self.factorial_recursive(self.n - 1)
+    def factorial(self):
+        """Original recursive factorial - object method"""
+        def helper(k):
+            if k == 0 or k == 1:
+                return 1
+            return k * helper(k - 1)
+        return helper(self.n)
 
     def factorial_math(self):
+        """Math library factorial using object state"""
         return math.factorial(self.n)
 
-    def display_results(self):
-        """Display all calculations for this object"""
-        print(f"\nResults for n = {self.n}:")
-        print("Fibonacci (iterative):", self.fibonacci_iterative())
-        print("Fibonacci (recursive):", self.fibonacci_recursive())
-        print("Factorial (iterative):", self.factorial_iterative())
-        print("Factorial (recursive):", self.factorial_recursive())
-        print("Factorial (math):", self.factorial_math())
+    def time_method(self, method_name):
+        """Object method to measure performance"""
+        start = time.time()
+        result = getattr(self, method_name)()
+        end = time.time()
+        return result, end - start
 
+    def show_results(self):
+        """Object method displaying all calculations"""
+        print(f"\n=== MathSeries Object Results for N = {self.n} ===")
+        
+        fib_iter, t1 = self.time_method('fibonacci_iterative')
+        fib_rec, t2 = self.time_method('fibonacci_series')
+        fact_iter, t3 = self.time_method('factorial_iterative')
+        fact_rec, t4 = self.time_method('factorial')
+        fact_math, t5 = self.time_method('factorial_math')
+        
+        print(f"Fibonacci (iterative):  {fib_iter} [{t1:.6f}s]")
+        print(f"Fibonacci (recursive): {fib_rec[:8]}... [{t2:.6f}s]")
+        print(f"Factorial (iterative): {fact_iter:,} [{t3:.6f}s]")
+        print(f"Factorial (recursive): {fact_rec:,} [{t4:.6f}s]")
+        print(f"Factorial (math lib):  {fact_math:,} [{t5:.6f}s]")
 
-# Object-oriented usage
-n = int(input("Enter a number: "))
-calc = MathCalculator(n)  # Create object
-calc.display_results()    # Call method on object
+# Pure object-oriented main program
+n = int(input("Enter a positive integer N: "))
+series = MathSeries(n)  # Create single object instance
+series.show_results()   # All operations through object methods
